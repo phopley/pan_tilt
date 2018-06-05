@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<launch>
+  <rosparam command="load" file="$(find pan_tilt)/config/config.yaml" />
+  <node pkg="pan_tilt" type="pan_tilt_node" name="pan_tilt_node" output="screen">
+    <remap from="pan_tilt_node/index0_position" to="pan_tilt_node/head_position" />
+  </node>
+  <node pkg="rosserial_python" type="serial_node.py" name="serial_node" output="screen" args="/dev/ttyUSB0" />
+</launch>
