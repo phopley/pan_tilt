@@ -4,7 +4,7 @@ servo:
   index0:
     pan_trim: 0
     tilt_trim: 0
-    tilt_max: 90
+    tilt_max: 100
     tilt_min: 0
     pan_servo: 0
     tilt_servo: 1
