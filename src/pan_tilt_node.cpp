@@ -43,28 +43,36 @@ PanTiltNode::PanTiltNode()
 	servo_array_pub_ = n_.advertise<servo_msgs::servo_array>("servo", 10);
 }
 
+// This callback is for when the dynamic configuration parameters change
+void PanTiltNode::reconfCallback(pan_tilt::PanTiltConfig &config, uint32_t level)
+{
+    index0_pan_trim_ = config.index0_pan_trim;
+    index0_tilt_trim_ = config.index0_tilt_trim;
+    index1_pan_trim_ = config.index1_pan_trim;
+    index1_tilt_trim_ = config.index1_tilt_trim;
+
+    // Send new messages with new trim values
+    movePanTilt(index0_pan_tilt_, index0_pan_trim_, index0_tilt_trim_, 0);
+    movePanTilt(index1_pan_tilt_, index1_pan_trim_, index1_tilt_trim_, 1);
+}
+//---------------------------------------------------------------------------
+
 // Callback to move the pan tilt device indexed 0
 void PanTiltNode::panTilt0CB(const servo_msgs::pan_tilt& pan_tilt)
 {
-    int pan_trim;
-    int tilt_trim;
+    // Store lastes value in case we change thte trim
+    index0_pan_tilt_ = pan_tilt;
     
-    (void)n_.getParamCached("/servo/index0/pan_trim", pan_trim);
-	(void)n_.getParamCached("/servo/index0/tilt_trim", tilt_trim);
-    
-    movePanTilt(pan_tilt, pan_trim, tilt_trim, 0);
+    movePanTilt(pan_tilt, index0_pan_trim_, index0_tilt_trim_, 0);
 }
 
 // Callback to move the pan tilt device indexed 1
 void PanTiltNode::panTilt1CB(const servo_msgs::pan_tilt& pan_tilt)
-{
-    int pan_trim;
-    int tilt_trim;
+{    
+    // Store lastes value in case we change thte trim
+    index1_pan_tilt_ = pan_tilt;
     
-    (void)n_.getParamCached("/servo/index1/pan_trim", pan_trim);
-	(void)n_.getParamCached("/servo/index1/tilt_trim", tilt_trim);
-    
-    movePanTilt(pan_tilt, pan_trim, tilt_trim, 1);
+    movePanTilt(pan_tilt, index1_pan_trim_, index0_tilt_trim_, 1);
 }
 
 void PanTiltNode::movePanTilt(const servo_msgs::pan_tilt& pan_tilt, int pan_trim, int tilt_trim, int index)
@@ -110,7 +118,15 @@ int PanTiltNode::checkMaxMin(int current_value, int max, int min)
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "pan_tilt_node");	
-	PanTiltNode pan_tiltnode;	
+	
+	PanTiltNode *pan_tiltnode = new PanTiltNode();
+	
+	dynamic_reconfigure::Server<pan_tilt::PanTiltConfig> server;
+    dynamic_reconfigure::Server<pan_tilt::PanTiltConfig>::CallbackType f;
+  	
+  	f = boost::bind(&PanTiltNode::reconfCallback, pan_tiltnode, _1, _2);
+    server.setCallback(f);
+    	
     std::string node_name = ros::this_node::getName();
 	ROS_INFO("%s started", node_name.c_str());
 	ros::spin();

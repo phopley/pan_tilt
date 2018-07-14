@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
 # other message required for pan/tilt
   servo_msgs
   roscpp
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -87,11 +88,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * uncomment the "generate_dynamic_reconfigure_options" section below
 ##     and list every .cfg file to be processed
 
-## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
+# Generate dynamic reconfigure parameters in the 'cfg' folder
+generate_dynamic_reconfigure_options(
+  cfg/pan_tilt.cfg
+)
 
 ###################################
 ## catkin specific configuration ##

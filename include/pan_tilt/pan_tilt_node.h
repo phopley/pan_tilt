@@ -6,6 +6,8 @@
  */
 #include <ros/ros.h>
 #include <servo_msgs/pan_tilt.h>
+#include <dynamic_reconfigure/server.h>
+#include <pan_tilt/PanTiltConfig.h>
 
 #define NUMBER_OF_PAN_TILT_DEVICES 2
 
@@ -13,6 +15,9 @@ class PanTiltNode
 {
 public:
     PanTiltNode();
+    
+    // This callback is for when the dynamic configuration parameters change
+    void reconfCallback(pan_tilt::PanTiltConfig &config, uint32_t level);
 
 private:
     void panTilt0CB(const servo_msgs::pan_tilt& pan_tilt);    
@@ -23,6 +28,16 @@ private:
     ros::NodeHandle n_;
     ros::Subscriber pan_tilt_sub_[NUMBER_OF_PAN_TILT_DEVICES];
     ros::Publisher servo_array_pub_;
+    
+    // Used for dynamic reconfiguration
+    int index0_pan_trim_;
+    int index0_tilt_trim_;
+    int index1_pan_trim_;
+    int index1_tilt_trim_;
+    
+    // Used to store last position (not including trim value)
+    servo_msgs::pan_tilt index0_pan_tilt_;
+    servo_msgs::pan_tilt index1_pan_tilt_;
 
     // Configuration parameters
     int pan_servo_[NUMBER_OF_PAN_TILT_DEVICES];     // Maps a servo to a pan device
