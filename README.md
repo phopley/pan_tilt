@@ -16,7 +16,7 @@ Topics:
   Subscribes `servo_msgs/pan_tilt` with the pan and tilt demands for the second pan/tilt device.
 
 * `servo`:  
-  Publishes `servo_msgs/servo_array` with the index of the servo (0-3) and the demand angle for the servo.
+  Publishes `servo_msgs/servo_array` with the index of the servo (0-3) and the demand angle for the servo. This topic is latched.
  
 
 Parameters:

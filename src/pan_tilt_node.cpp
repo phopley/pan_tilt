@@ -40,7 +40,7 @@ PanTiltNode::PanTiltNode()
     pan_tilt_sub_[0] = n_.subscribe("pan_tilt_node/index0_position", 10, &PanTiltNode::panTilt0CB, this);
 	pan_tilt_sub_[1] = n_.subscribe("pan_tilt_node/index1_position", 10, &PanTiltNode::panTilt1CB, this);
 
-	servo_array_pub_ = n_.advertise<servo_msgs::servo_array>("servo", 10);
+	servo_array_pub_ = n_.advertise<servo_msgs::servo_array>("servo", 10, true);
 }
 
 // This callback is for when the dynamic configuration parameters change

@@ -2,6 +2,10 @@
 Changelog for package pan_tilt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.3 (2018-07-27)
+------------------
+* servo_array message now latched
+
 0.1.2 (2018-07-14)
 ------------------
 * Trim now controlled by dynamic reconfiguration server
