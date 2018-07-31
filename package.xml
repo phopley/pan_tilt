@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>pan_tilt</name>
-  <version>0.1.3</version>
+  <version>0.1.4</version>
   <description>The pan_tilt package controls any array of pan tilt devices</description>
 
   <maintainer email="sleepyserver6@gmail.com">Philip Hopley</maintainer>
