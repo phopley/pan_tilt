@@ -4,11 +4,11 @@
   <version>0.1.3</version>
   <description>The pan_tilt package controls any array of pan tilt devices</description>
 
-  <maintainer email="sleepyserver6gmail.com">Philip Hopley</maintainer>
+  <maintainer email="sleepyserver6@gmail.com">Philip Hopley</maintainer>
 
   <license>BSD</license>
 
-  <author email="sleepyserver6gmail.com">Philip Hopley</author>
+  <author email="sleepyserver6@gmail.com">Philip Hopley</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
