@@ -2,6 +2,10 @@
 Changelog for package pan_tilt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.4 (2018-07-31)
+------------------
+* Invalid email address in package.xml file causes error when node launched
+
 0.1.3 (2018-07-27)
 ------------------
 * servo_array message now latched
