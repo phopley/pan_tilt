@@ -2,6 +2,11 @@
 Changelog for package pan_tilt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.1.5 (2018-08-15)
+------------------
+* tilt_max for index0 servo in config file set to 90
+* pan trim for index0 servo in pan_tilt.cfg set to -6
+
 0.1.4 (2018-07-31)
 ------------------
 * Invalid email address in package.xml file causes error when node launched
