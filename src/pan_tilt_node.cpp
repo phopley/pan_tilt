@@ -40,7 +40,10 @@ PanTiltNode::PanTiltNode()
     pan_tilt_sub_[0] = n_.subscribe("pan_tilt_node/index0_position", 10, &PanTiltNode::panTilt0CB, this);
 	pan_tilt_sub_[1] = n_.subscribe("pan_tilt_node/index1_position", 10, &PanTiltNode::panTilt1CB, this);
 
+    // Published topic is latched
 	servo_array_pub_ = n_.advertise<servo_msgs::servo_array>("servo", 10, true);
+
+    first_reconfigure_ = true;
 }
 
 // This callback is for when the dynamic configuration parameters change
@@ -51,9 +54,19 @@ void PanTiltNode::reconfCallback(pan_tilt::PanTiltConfig &config, uint32_t level
     index1_pan_trim_ = config.index1_pan_trim;
     index1_tilt_trim_ = config.index1_tilt_trim;
 
-    // Send new messages with new trim values
-    movePanTilt(index0_pan_tilt_, index0_pan_trim_, index0_tilt_trim_, 0);
-    movePanTilt(index1_pan_tilt_, index1_pan_trim_, index1_tilt_trim_, 1);
+    // We don't want the first call which initalises the parameters
+    // to result in sending a message to the servos as the angle will
+    // be just the trim value if no position messages received yet
+    if(first_reconfigure_ == false)
+    {
+        // Send new messages with new trim values
+        movePanTilt(index0_pan_tilt_, index0_pan_trim_, index0_tilt_trim_, 0);
+        movePanTilt(index1_pan_tilt_, index1_pan_trim_, index1_tilt_trim_, 1);
+    }
+    else
+    {
+        first_reconfigure_ = false;
+    }
 }
 //---------------------------------------------------------------------------
 

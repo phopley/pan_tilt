@@ -1,9 +1,11 @@
 # Configuration for pan/tilt devices
-# In Rodney index0 is for the head and index 1 is for the LIDAR
+# In Rodney index0 is for the head and index 1 is spare
 servo:
   index0:
-    tilt_max: 90
-    tilt_min: 0
+    tilt_max: 170
+    tilt_min: 50
+    pan_max: 180
+    pan_min: 0
     pan_servo: 0
     tilt_servo: 1
   index1:
