@@ -34,7 +34,8 @@ private:
     int index0_tilt_trim_;
     int index1_pan_trim_;
     int index1_tilt_trim_;
-    bool first_reconfigure_;
+    bool first_index0_msg_received_;
+    bool first_index1_msg_received_;
     
     // Used to store last position (not including trim value)
     servo_msgs::pan_tilt index0_pan_tilt_;

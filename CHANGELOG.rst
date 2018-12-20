@@ -4,7 +4,7 @@ Changelog for package pan_tilt
 
 Unreleased
 ------------------
-* The first dynamic reconfig call now does not send servo messages
+* Don't publish a position message from a dynamic reconfig call unless a position message has been received
 * Changes to config file for tilt min and max
 * pan trim for index0 servo in pan_tilt.cfg set to 0
 
