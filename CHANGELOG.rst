@@ -4,6 +4,8 @@ Changelog for package pan_tilt
 
 Unreleased
 ------------------
+* Changes to match ROS standards for coordinate frames and to use to /sensor_msgs/JointState type (input radians)
+* Layout of config file changed
 * Don't publish a position message from a dynamic reconfig call unless a position message has been received
 * Changes to config file for tilt min and max
 * pan trim for index0 servo in pan_tilt.cfg set to 0

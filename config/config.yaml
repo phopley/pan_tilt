@@ -2,12 +2,18 @@
 # In Rodney index0 is for the head and index 1 is spare
 servo:
   index0:
-    tilt_max: 170
-    tilt_min: 50
-    pan_max: 180
-    pan_min: 0
-    pan_servo: 0
-    tilt_servo: 1
+    pan:
+      servo: 0          
+      joint_name: 'head_pan'
+    tilt:
+      servo: 1
+      flip_rotation: true
+      max: 0.349066 
+      min: -1.39626
+      joint_name: 'head_tilt'
   index1:
-    pan_servo: 2
-    tilt_servo: 3
+    pan:
+      servo: 2
+    tilt:
+      servo: 3
+

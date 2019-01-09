@@ -9,41 +9,55 @@ Once you have the node built you can test it by launching the pan_tilt_test.laun
 ## Node Information
 Topics:
 
-* `pan_tilt_node/index0_position`:  
-  Subscribes `servo_msgs/pan_tilt` with the pan and tilt demands for the first pan/tilt device.
-
-* `pan_tilt_node/index1_position`:  
-  Subscribes `servo_msgs/pan_tilt` with the pan and tilt demands for the second pan/tilt device.
+* `/pan_tilt_node/joints`:  
+  Subscribes `sensor_msgs/JointState` with the pan and tilt positions for upto the four joints.
 
 * `servo`:  
-  Publishes `servo_msgs/servo_array` with the index of the servo (0-3) and the demand angle for the servo. This topic is latched.
+  Publishes `servo_msgs/servo_array` with the index of the servo (0-3) and the demand angle (in degrees) for the servo. This topic is latched.
  
 
 Parameters:
 
-* `/servo/index0/pan_servo`: Servo index for the pan servo of the first device. Default value = 0.
+* `/servo/index0/pan/servo`: Servo index for the pan servo of the first device. Default value = 0.
 
-* `/servo/index0/tilt_servo`: Servo index for the tilt servo of the first device. Default = 1.
+* `/servo/index0/tilt/servo`: Servo index for the tilt servo of the first device. Default = 1.
 
-* `/servo/index1/pan_servo`: Servo index for the pan servo of the second device. Default value = 2.
+* `/servo/index1/pan/servo`: Servo index for the pan servo of the second device. Default value = 2.
 
-* `/servo/index1/tilt_servo`: Servo index for the tilt servo of the second device. Default = 3.
+* `/servo/index1/tilt/servo`: Servo index for the tilt servo of the second device. Default = 3.
 
-* `/servo/index0/pan_max`: Maximum range for the pan servo of the first device. Default = 180.
+* `/servo/index0/pan/flip_rotation`: true if the rotation of the pan servo on the first device should be flipped. Default = false
 
-* `/servo/index0/pan_min`: Minimum range for the pan servo of the first device. Default = 0.
+* `/servo/index0/tilt/flip_rotation`: true if the rotation of the tilt servo on the first device should be flipped. Default = false
 
-* `/servo/index0/tilt_max`: Maximum range for the tilt servo of the first device. Default = 180.
+* `/servo/index1/pan/flip_rotation`: true if the rotation of the pan servo on the second device should be flipped. Default = false
 
-* `/servo/index0/tilt_min`: Minimum range for the tilt servo of first device. Default = 0.
+* `/servo/index1/tilt/flip_rotation`: true if the rotation of the tilt servo on the second device should be flipped. Default = false
 
-* `/servo/index1/pan_max`: Maximum range for the pan servo of second device. Default = 180.
+* `/servo/index0/pan/max`: Maximum range for the pan servo of the first device. Default = pi/2.
 
-* `/servo/index1/pan_min`: Minimum range for the pan servo of second device. Default = 0.
+* `/servo/index0/pan/min`: Minimum range for the pan servo of the first device. Default = -pi/2.
 
-* `/servo/index1/tilt_max`: Maximum range for the tilt servo of second device. Default = 180.
+* `/servo/index0/tilt/max`: Maximum range for the tilt servo of the first device. Default = pi/2.
 
-* `/servo/index1/tilt_min`: Minimum range for the tilt servo of second device. Default = 0.
+* `/servo/index0/tilt/min`: Minimum range for the tilt servo of first device. Default = -pi/2.
+
+* `/servo/index1/pan/max`: Maximum range for the pan servo of second device. Default = pi/2.
+
+* `/servo/index1/pan/min`: Minimum range for the pan servo of second device. Default = -pi/2.
+
+* `/servo/index1/tilt/max`: Maximum range for the tilt servo of second device. Default = pi/2.
+
+* `/servo/index1/tilt/min`: Minimum range for the tilt servo of second device. Default = -pi/2.
+
+* `/servo/index0/pan/joint_name`: Name of pan joint on the first device. Default = reserved_pan0
+
+* `/servo/index0/tilt/joint_name`: Name of tilt joint on the first device. Default = reserved_tilt0
+
+* `/servo/index1/pan/joint_name`:  Name of pan joint on the second device. Default = reserved_pan1
+
+* `/servo/index1/tilt/joint_name`: Name of tilt joint on the second device. Default = reserved_tilt1
+
 
 ## Trimming The Servos with dynamic reconfiguration
 
