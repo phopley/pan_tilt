@@ -16,15 +16,15 @@ PanTiltNode::PanTiltNode()
     double min_radians;
     int temp;
 
-	/* Get any parameters from server which will not change after startup. 
+    /* Get any parameters from server which will not change after startup. 
      * Defaults used if parameter is not in the parameter server
      */
 
     // Which servo is used for what
-	n_.param("/servo/index0/pan/servo",  pan_servo_[0],  0);
-	n_.param("/servo/index0/tilt/servo", tilt_servo_[0], 1);
-	n_.param("/servo/index1/pan/servo",  pan_servo_[1],  2);
-	n_.param("/servo/index1/tilt/servo", tilt_servo_[1], 3);
+    n_.param("/servo/index0/pan/servo",  pan_servo_[0],  0);
+    n_.param("/servo/index0/tilt/servo", tilt_servo_[0], 1);
+    n_.param("/servo/index1/pan/servo",  pan_servo_[1],  2);
+    n_.param("/servo/index1/tilt/servo", tilt_servo_[1], 3);
 
     // Check for any servos mounted the opposite rotation of the right hand rule
     n_.param("/servo/index0/pan/flip_rotation", pan_flip_rotation_[0], false);
@@ -36,8 +36,8 @@ PanTiltNode::PanTiltNode()
      * radians and RH rule as per ROS standard. These need converting
      * to degrees and may need flipping.
      */
-	n_.param("/servo/index0/pan/max", max_radians, M_PI/2.0);
-	n_.param("/servo/index0/pan/min", min_radians, -(M_PI/2.0));
+    n_.param("/servo/index0/pan/max", max_radians, M_PI/2.0);
+    n_.param("/servo/index0/pan/min", min_radians, -(M_PI/2.0));
     pan_max_[0] = (int)signedRadianToServoDegrees(max_radians, pan_flip_rotation_[0]);
     pan_min_[0] = (int)signedRadianToServoDegrees(min_radians, pan_flip_rotation_[0]);
     if(true == pan_flip_rotation_[0])
@@ -47,7 +47,7 @@ PanTiltNode::PanTiltNode()
         pan_min_[0] = temp;
     }
 
-	n_.param("/servo/index0/tilt/max", max_radians, M_PI/2.0);
+    n_.param("/servo/index0/tilt/max", max_radians, M_PI/2.0);
     n_.param("/servo/index0/tilt/min", min_radians, -(M_PI/2.0));
     tilt_max_[0] = (int)signedRadianToServoDegrees(max_radians, tilt_flip_rotation_[0]);
     tilt_min_[0] = (int)signedRadianToServoDegrees(min_radians, tilt_flip_rotation_[0]);
@@ -58,7 +58,7 @@ PanTiltNode::PanTiltNode()
         tilt_min_[0] = temp;
     }
 
-	n_.param("/servo/index1/pan/max", max_radians, M_PI/2.0);
+    n_.param("/servo/index1/pan/max", max_radians, M_PI/2.0);
     n_.param("/servo/index1/pan/min", min_radians, -(M_PI/2.0));
     pan_max_[1] = (int)signedRadianToServoDegrees(max_radians, pan_flip_rotation_[1]);	
     pan_min_[1] = (int)signedRadianToServoDegrees(min_radians, pan_flip_rotation_[1]);
@@ -69,7 +69,7 @@ PanTiltNode::PanTiltNode()
         pan_min_[1] = temp;
     }
 
-	n_.param("/servo/index1/tilt/max", max_radians, M_PI/2.0);
+    n_.param("/servo/index1/tilt/max", max_radians, M_PI/2.0);
     n_.param("/servo/index1/tilt/min", min_radians, -(M_PI/2.0));
     tilt_max_[1] = (int)signedRadianToServoDegrees(max_radians, tilt_flip_rotation_[1]);
     tilt_min_[1] = (int)signedRadianToServoDegrees(min_radians, tilt_flip_rotation_[1]);
@@ -90,7 +90,7 @@ PanTiltNode::PanTiltNode()
     first_index1_msg_received_ = false;
 
     // Published topic is latched
-	servo_array_pub_ = n_.advertise<servo_msgs::servo_array>("/servo", 10, true);
+    servo_array_pub_ = n_.advertise<servo_msgs::servo_array>("/servo", 10, true);
 
     // Subscribe to topic
     joint_state_sub_ = n_.subscribe("/pan_tilt_node/joints", 10, &PanTiltNode::panTiltCB, this);
@@ -196,62 +196,61 @@ double PanTiltNode::signedRadianToServoDegrees(double rad, bool flip_rotation)
 
 void PanTiltNode::movePanTilt(int pan_value, int tilt_value, int pan_trim, int tilt_trim, int index)
 {
-	int pan;
-	int tilt;
-	servo_msgs::servo_array servo;
+    int pan;
+    int tilt;
+    servo_msgs::servo_array servo;
 
-	pan = pan_trim + pan_value;
-	tilt = tilt_trim + tilt_value;
+    pan = pan_trim + pan_value;
+    tilt = tilt_trim + tilt_value;
 
-	pan = checkMaxMin(pan, pan_max_[index], pan_min_[index]);
-	tilt = checkMaxMin(tilt, tilt_max_[index], tilt_min_[index]);
+    pan = checkMaxMin(pan, pan_max_[index], pan_min_[index]);
+    tilt = checkMaxMin(tilt, tilt_max_[index], tilt_min_[index]);
 
-	// Send message for pan position
-	servo.index = (unsigned int)pan_servo_[index];
-	servo.angle = (unsigned int)pan;
-	servo_array_pub_.publish(servo);
+    // Send message for pan position
+    servo.index = (unsigned int)pan_servo_[index];
+    servo.angle = (unsigned int)pan;
+    servo_array_pub_.publish(servo);
 
-	// Send message for tilt position
-	servo.index = (unsigned int)tilt_servo_[index];
-	servo.angle = (unsigned int)tilt;
-	servo_array_pub_.publish(servo);    
+    // Send message for tilt position
+    servo.index = (unsigned int)tilt_servo_[index];
+    servo.angle = (unsigned int)tilt;
+    servo_array_pub_.publish(servo);    
 }
 //---------------------------------------------------------------------------
 
 int PanTiltNode::checkMaxMin(int current_value, int max, int min)
 {
-	int value = current_value;
+    int value = current_value;
 
-	if (value > max)
-	{
-		value = max;
-	}
+    if (value > max)
+    {
+        value = max;
+    }
 
-	if (value < min)
-	{
-		value = min;
-	}
+    if (value < min)
+    {
+        value = min;
+    }
 
-	return (value);
+    return (value);
 }
 //---------------------------------------------------------------------------
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "pan_tilt_node");	
+    ros::init(argc, argv, "pan_tilt_node");	
 	
-	PanTiltNode *pan_tiltnode = new PanTiltNode();
+    PanTiltNode *pan_tiltnode = new PanTiltNode();
 	
-	dynamic_reconfigure::Server<pan_tilt::PanTiltConfig> server;
+    dynamic_reconfigure::Server<pan_tilt::PanTiltConfig> server;
     dynamic_reconfigure::Server<pan_tilt::PanTiltConfig>::CallbackType f;
   	
-  	f = boost::bind(&PanTiltNode::reconfCallback, pan_tiltnode, _1, _2);
+    f = boost::bind(&PanTiltNode::reconfCallback, pan_tiltnode, _1, _2);
     server.setCallback(f);
     	
     std::string node_name = ros::this_node::getName();
-	ROS_INFO("%s started", node_name.c_str());
-	ros::spin();
-	return 0;
+    ROS_INFO("%s started", node_name.c_str());
+    ros::spin();
+    return 0;
 }
 //---------------------------------------------------------------------------
-
