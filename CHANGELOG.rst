@@ -2,7 +2,7 @@
 Changelog for package pan_tilt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Unreleased
+1.0.0 (2019-01-09)
 ------------------
 * Changes to match ROS standards for coordinate frames and to use to /sensor_msgs/JointState type (input radians)
 * Layout of config file changed
