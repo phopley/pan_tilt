@@ -22,7 +22,7 @@ public:
 private:
     void panTiltCB(const sensor_msgs::JointState& joint);
     void movePanTilt(int pan_value, int tilt_value, int pan_trim, int tilt_trim, int index);
-	int checkMaxMin(int current_value, int max, int min);
+    int checkMaxMin(int current_value, int max, int min);
     double signedRadianToServoDegrees(double rad, bool flip_rotation);
 
     ros::NodeHandle n_;
@@ -45,7 +45,7 @@ private:
 
     // Configuration parameters
     int pan_servo_[NUMBER_OF_PAN_TILT_DEVICES];     // Maps a servo to a pan device
-	int tilt_servo_[NUMBER_OF_PAN_TILT_DEVICES];    // Maps a servo to a tilt device
+    int tilt_servo_[NUMBER_OF_PAN_TILT_DEVICES];    // Maps a servo to a tilt device
     int pan_max_[NUMBER_OF_PAN_TILT_DEVICES];       // Maximum range for the pan servo    
     int pan_min_[NUMBER_OF_PAN_TILT_DEVICES];       // Minimum range for the pan servo
     int tilt_max_[NUMBER_OF_PAN_TILT_DEVICES];      // Maximum range for the tilt servo 
