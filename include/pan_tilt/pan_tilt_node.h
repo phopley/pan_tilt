@@ -1,9 +1,25 @@
-#ifndef PAN_TILT_NODE_H_
-#define PAN_TILT_NODE_H_
-/* Pan/Tilt Processing Node. Takes demand for Pan/Tilt position and request the servo positions.
+/*
+ * Copyright 2019 Philip Hopley
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Pan/Tilt Processing Node. Takes demand for Pan/Tilt position and request the servo positions.
  * It can handle a number of pan tilt device. For example index 0 may be for a head/camera and
  * index 1 could be for a second device.
  */
+#ifndef PAN_TILT_NODE_H_
+#define PAN_TILT_NODE_H_
+
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
 #include <dynamic_reconfigure/server.h>
@@ -14,7 +30,7 @@
 class PanTiltNode
 {
 public:
-    PanTiltNode();
+    PanTiltNode(ros::NodeHandle n, ros::NodeHandle n_private);
     
     // This callback is for when the dynamic configuration parameters change
     void reconfCallback(pan_tilt::PanTiltConfig &config, uint32_t level);
@@ -25,9 +41,12 @@ private:
     int checkMaxMin(int current_value, int max, int min);
     double signedRadianToServoDegrees(double rad, bool flip_rotation);
 
-    ros::NodeHandle n_;
+    ros::NodeHandle nh_;
+    ros::NodeHandle nh_private_;
     ros::Subscriber joint_state_sub_;
     ros::Publisher servo_array_pub_;
+    
+    pan_tilt::PanTiltConfig default_config_;
     
     // Used for dynamic reconfiguration
     int index0_pan_trim_;

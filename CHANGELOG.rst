@@ -2,6 +2,13 @@
 Changelog for package pan_tilt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.0 (2019-05-02)
+------------------
+* Added license
+* some parameters now private
+* Added functionality to restore defaults in reconfiguration
+* Trim parameters now not only set from reconfiguration but also from config file
+
 1.0.0 (2019-01-09)
 ------------------
 * Changes to match ROS standards for coordinate frames and to use to /sensor_msgs/JointState type (input radians)

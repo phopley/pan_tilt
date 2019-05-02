@@ -1,4 +1,19 @@
-/* Pan/Tilt Processing Node. Takes demand for Pan/Tilt position and request the servo positions.
+/*
+ * Copyright 2019 Philip Hopley
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Pan/Tilt Processing Node. Takes demand for Pan/Tilt position and request the servo positions.
  * It can handle a number of pan tilt device. For example index 0 may be for a head/camera and
  * index 1 could be for a second device.
  *
@@ -10,34 +25,46 @@
 #include <math.h>
 
 // Constructor 
-PanTiltNode::PanTiltNode()
+PanTiltNode::PanTiltNode(ros::NodeHandle n, ros::NodeHandle n_private)
 {
     double max_radians;
     double min_radians;
     int temp;
+    
+    nh_ = n;
+    nh_private_ = n_private;
 
     /* Get any parameters from server which will not change after startup. 
      * Defaults used if parameter is not in the parameter server
      */
 
+    // Using the private node handle in this way means the <node_name> will prefix the parameter
+    
+    nh_private_.param("index0_pan_trim", index0_pan_trim_, 0);
+    nh_private_.param("index0_tilt_trim", index0_tilt_trim_, 0);
+    nh_private_.param("index1_pan_trim", index1_pan_trim_ , 0);
+    nh_private_.param("index1_tilt_trim", index1_tilt_trim_, 0); 
+
     // Which servo is used for what
-    n_.param("/servo/index0/pan/servo",  pan_servo_[0],  0);
-    n_.param("/servo/index0/tilt/servo", tilt_servo_[0], 1);
-    n_.param("/servo/index1/pan/servo",  pan_servo_[1],  2);
-    n_.param("/servo/index1/tilt/servo", tilt_servo_[1], 3);
+    nh_private_.param("servo/index0/pan/servo",  pan_servo_[0],  0);
+    nh_private_.param("servo/index0/tilt/servo", tilt_servo_[0], 1);
+    nh_private_.param("servo/index1/pan/servo",  pan_servo_[1],  2);
+    nh_private_.param("servo/index1/tilt/servo", tilt_servo_[1], 3);
 
     // Check for any servos mounted the opposite rotation of the right hand rule
-    n_.param("/servo/index0/pan/flip_rotation", pan_flip_rotation_[0], false);
-    n_.param("/servo/index0/tilt/flip_rotation", tilt_flip_rotation_[0], false);
-    n_.param("/servo/index1/pan/flip_rotation", pan_flip_rotation_[1], false);
-    n_.param("/servo/index1/tilt/flip_rotation", tilt_flip_rotation_[1], false);
+    nh_private_.param("servo/index0/pan/flip_rotation", pan_flip_rotation_[0], false);
+    nh_private_.param("servo/index0/tilt/flip_rotation", tilt_flip_rotation_[0], false);
+    nh_private_.param("servo/index1/pan/flip_rotation", pan_flip_rotation_[1], false);
+    nh_private_.param("servo/index1/tilt/flip_rotation", tilt_flip_rotation_[1], false);
+
+    // All the other parameters are non private
 
     /* Maximum and Minimum ranges. Values stored on parameter server in
      * radians and RH rule as per ROS standard. These need converting
      * to degrees and may need flipping.
      */
-    n_.param("/servo/index0/pan/max", max_radians, M_PI/2.0);
-    n_.param("/servo/index0/pan/min", min_radians, -(M_PI/2.0));
+    nh_.param("/servo/index0/pan/max", max_radians, M_PI/2.0);
+    nh_.param("/servo/index0/pan/min", min_radians, -(M_PI/2.0));
     pan_max_[0] = (int)signedRadianToServoDegrees(max_radians, pan_flip_rotation_[0]);
     pan_min_[0] = (int)signedRadianToServoDegrees(min_radians, pan_flip_rotation_[0]);
     if(true == pan_flip_rotation_[0])
@@ -47,8 +74,8 @@ PanTiltNode::PanTiltNode()
         pan_min_[0] = temp;
     }
 
-    n_.param("/servo/index0/tilt/max", max_radians, M_PI/2.0);
-    n_.param("/servo/index0/tilt/min", min_radians, -(M_PI/2.0));
+    nh_.param("/servo/index0/tilt/max", max_radians, M_PI/2.0);
+    nh_.param("/servo/index0/tilt/min", min_radians, -(M_PI/2.0));
     tilt_max_[0] = (int)signedRadianToServoDegrees(max_radians, tilt_flip_rotation_[0]);
     tilt_min_[0] = (int)signedRadianToServoDegrees(min_radians, tilt_flip_rotation_[0]);
     if(true == tilt_flip_rotation_[0])
@@ -58,8 +85,8 @@ PanTiltNode::PanTiltNode()
         tilt_min_[0] = temp;
     }
 
-    n_.param("/servo/index1/pan/max", max_radians, M_PI/2.0);
-    n_.param("/servo/index1/pan/min", min_radians, -(M_PI/2.0));
+    nh_.param("/servo/index1/pan/max", max_radians, M_PI/2.0);
+    nh_.param("/servo/index1/pan/min", min_radians, -(M_PI/2.0));
     pan_max_[1] = (int)signedRadianToServoDegrees(max_radians, pan_flip_rotation_[1]);	
     pan_min_[1] = (int)signedRadianToServoDegrees(min_radians, pan_flip_rotation_[1]);
     if(true == pan_flip_rotation_[1])
@@ -69,8 +96,8 @@ PanTiltNode::PanTiltNode()
         pan_min_[1] = temp;
     }
 
-    n_.param("/servo/index1/tilt/max", max_radians, M_PI/2.0);
-    n_.param("/servo/index1/tilt/min", min_radians, -(M_PI/2.0));
+    nh_.param("/servo/index1/tilt/max", max_radians, M_PI/2.0);
+    nh_.param("/servo/index1/tilt/min", min_radians, -(M_PI/2.0));
     tilt_max_[1] = (int)signedRadianToServoDegrees(max_radians, tilt_flip_rotation_[1]);
     tilt_min_[1] = (int)signedRadianToServoDegrees(min_radians, tilt_flip_rotation_[1]);
     if(true == tilt_flip_rotation_[1])
@@ -81,41 +108,59 @@ PanTiltNode::PanTiltNode()
     }
 
     // Joint names
-    n_.param<std::string>("/servo/index0/pan/joint_name", pan_joint_names_[0], "reserved_pan0");
-    n_.param<std::string>("/servo/index0/tilt/joint_name", tilt_joint_names_[0], "reserved_tilt0");
-    n_.param<std::string>("/servo/index1/pan/joint_name", pan_joint_names_[1], "reserved_pan1");
-    n_.param<std::string>("/servo/index1/tilt/joint_name", tilt_joint_names_[1], "reserved_tilt1");
+    nh_.param<std::string>("/servo/index0/pan/joint_name", pan_joint_names_[0], "reserved_pan0");
+    nh_.param<std::string>("/servo/index0/tilt/joint_name", tilt_joint_names_[0], "reserved_tilt0");
+    nh_.param<std::string>("/servo/index1/pan/joint_name", pan_joint_names_[1], "reserved_pan1");
+    nh_.param<std::string>("/servo/index1/tilt/joint_name", tilt_joint_names_[1], "reserved_tilt1");
 
     first_index0_msg_received_ = false;
     first_index1_msg_received_ = false;
 
     // Published topic is latched
-    servo_array_pub_ = n_.advertise<servo_msgs::servo_array>("/servo", 10, true);
+    servo_array_pub_ = nh_.advertise<servo_msgs::servo_array>("/servo", 10, true);
 
     // Subscribe to topic
-    joint_state_sub_ = n_.subscribe("/pan_tilt_node/joints", 10, &PanTiltNode::panTiltCB, this);
+    joint_state_sub_ = nh_.subscribe("/pan_tilt_node/joints", 10, &PanTiltNode::panTiltCB, this);
 }
 //---------------------------------------------------------------------------
 
 // This callback is for when the dynamic configuration parameters change
 void PanTiltNode::reconfCallback(pan_tilt::PanTiltConfig &config, uint32_t level)
 {
-    index0_pan_trim_ = config.index0_pan_trim;
-    index0_tilt_trim_ = config.index0_tilt_trim;
-    index1_pan_trim_ = config.index1_pan_trim;
-    index1_tilt_trim_ = config.index1_tilt_trim;
-
-    // We don't want to send a message following a call here unless we have received
-    // a position message. Otherwise the trim value will be taken for an actual position.
-    if(first_index0_msg_received_ == true)
+    static bool first_call = false;
+    
+    // First call to this function just save the config
+    if(first_call == false)
     {
-        // Send new messages with new trim values
-        movePanTilt(index0_pan_, index0_tilt_, index0_pan_trim_, index0_tilt_trim_, 0);        
+        default_config_ = config;
+        first_call = true;
     }
-
-    if(first_index1_msg_received_ == true)
+    else
     {
-        movePanTilt(index1_pan_, index1_tilt_, index1_pan_trim_, index1_tilt_trim_, 1);
+        // Check to restore config
+        if(config.restore_defaults == true)
+        {
+            config = default_config_;
+            config.restore_defaults = false;
+        }
+                    
+        index0_pan_trim_ = config.index0_pan_trim;
+        index0_tilt_trim_ = config.index0_tilt_trim;
+        index1_pan_trim_ = config.index1_pan_trim;
+        index1_tilt_trim_ = config.index1_tilt_trim;
+
+        // We don't want to send a message following a call here unless we have received
+        // a position message. Otherwise the trim value will be taken for an actual position.
+        if(first_index0_msg_received_ == true)
+        {
+            // Send new messages with new trim values
+            movePanTilt(index0_pan_, index0_tilt_, index0_pan_trim_, index0_tilt_trim_, 0);        
+        }
+
+        if(first_index1_msg_received_ == true)
+        {
+            movePanTilt(index1_pan_, index1_tilt_, index1_pan_trim_, index1_tilt_trim_, 1);
+        }
     }
 }
 //---------------------------------------------------------------------------
@@ -239,8 +284,9 @@ int PanTiltNode::checkMaxMin(int current_value, int max, int min)
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "pan_tilt_node");	
-	
-    PanTiltNode *pan_tiltnode = new PanTiltNode();
+	ros::NodeHandle nh;
+    ros::NodeHandle nh_private("~"); 
+    PanTiltNode *pan_tiltnode = new PanTiltNode(nh, nh_private);
 	
     dynamic_reconfigure::Server<pan_tilt::PanTiltConfig> server;
     dynamic_reconfigure::Server<pan_tilt::PanTiltConfig>::CallbackType f;

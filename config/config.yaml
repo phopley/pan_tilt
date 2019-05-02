@@ -4,16 +4,15 @@ servo:
   index0:
     pan:
       servo: 0          
-      joint_name: 'head_pan'
     tilt:
       servo: 1
       flip_rotation: true
-      max: 0.349066 
-      min: -1.39626
-      joint_name: 'head_tilt'
   index1:
     pan:
       servo: 2
     tilt:
       servo: 3
+      
+index0_pan_trim: 6
+index0_tilt_trim: 12
 

@@ -1,0 +1,9 @@
+# In Rodney index0 is for the head and index 1 is spare
+servo:
+  index0:
+    pan:
+      joint_name: 'head_pan'
+    tilt:
+      max: 0.349066 
+      min: -1.39626
+      joint_name: 'head_tilt'

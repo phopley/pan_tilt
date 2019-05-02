@@ -1,27 +1,23 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>pan_tilt</name>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <description>The pan_tilt package controls any array of pan tilt devices</description>
 
   <maintainer email="sleepyserver6@gmail.com">Philip Hopley</maintainer>
 
-  <license>BSD</license>
+  <license>Apache 2</license>
 
   <author email="sleepyserver6@gmail.com">Philip Hopley</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>servo_msgs</build_depend>
-  <build_depend>roscpp</build_depend>
+  <depend>servo_msgs</depend>
+  <depend>roscpp</depend>
+  
   <build_depend>dynamic_reconfigure</build_depend>
   <build_depend>sensor_msgs</build_depend>
 
-  <build_export_depend>servo_msgs</build_export_depend>
-  <build_export_depend>roscpp</build_export_depend>
-
-  <exec_depend>servo_msgs</exec_depend>
-  <exec_depend>roscpp</exec_depend>
   <exec_depend>dynamic_reconfigure</exec_depend> 
   <exec_depend>sensor_msgs</exec_depend>
 
